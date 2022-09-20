@@ -15,37 +15,56 @@ const BISHOP_WHITE = '♗'
 const QUEEN_WHITE = '♕'
 const KING_WHITE = '♔'
 
+
+var gGameElements = {
+    pawn: [PAWN_BLACK, PAWN_WHITE],
+    rook: [ROOK_BLACK, ROOK_WHITE],
+    knight: [KNIGHT_BLACK, KNIGHT_WHITE],
+    bishop: [KNIGHT_BLACK, KNIGHT_WHITE],
+    queen: [QUEEN_BLACK, QUEEN_WHITE],
+    king: [KING_BLACK, KING_WHITE]
+}
+
+
 // The Chess Board
 var gBoard
 var gSelectedElCell = null
+var gIsBlackTurn = true
 
-function restartGame() {
+function initGame() {
     gBoard = buildBoard()
+    console.log(gBoard);
     renderBoard(gBoard)
 }
 
 function buildBoard() {
     var board = []
+
     // TODO: build the board 8 * 8
     for (var i = 0; i < 8; i++) {
         board[i] = []
         for (var j = 0; j < 8; j++) {
             board[i][j] = ''
-            if (i === 1) board[i][j] = PAWN_BLACK
-            if (i === 6) board[i][j] = PAWN_WHITE
+            if (i === 1) {
+                board[i][j] = gGameElements.pawn[0]
+            }
+            if (i === 6) {
+                board[i][j] = gGameElements.pawn[1]
+            }
         }
     }
-    board[0][0] = board[0][7] = ROOK_BLACK
-    board[0][1] = board[0][6] = KNIGHT_BLACK
-    board[0][2] = board[0][5] = BISHOP_BLACK
-    board[0][3] = QUEEN_BLACK
-    board[0][4] = KING_BLACK
+    board[0][0] = board[0][7] = gGameElements.rook[0]
+    board[0][1] = board[0][6] = gGameElements.knight[0]
+    board[0][2] = board[0][5] = gGameElements.bishop[0]
+    board[0][3] = gGameElements.queen[0]
+    board[0][4] = gGameElements.king[0]
 
-    board[7][0] = board[7][7] = ROOK_WHITE
-    board[7][1] = board[7][6] = KNIGHT_WHITE
-    board[7][2] = board[7][5] = BISHOP_WHITE
-    board[7][3] = QUEEN_WHITE
-    board[7][4] = KING_WHITE
+    board[7][0] = board[7][7] = gGameElements.rook[1]
+    board[7][1] = board[7][6] = gGameElements.knight[1]
+    board[7][2] = board[7][5] = gGameElements.bishop[1]
+    board[7][3] = gGameElements.queen[1]
+    board[7][4] = gGameElements.king[1]
+
 
     console.table(board)
     return board
@@ -86,7 +105,6 @@ function cellClicked(elCell) {
 
     var cellCoord = getCellCoord(elCell.id)
     var piece = gBoard[cellCoord.i][cellCoord.j]
-
     var possibleCoords = []
 
     switch (piece) {
@@ -312,38 +330,42 @@ function getAllPossibleCoordsKnight(pieceCoord) {
             currPos = { i: pieceCoord.i + 2, j: pieceCoord.j - 1 }
             if (isEmptyCell(currPos)) res.push(currPos)
         }
+    }
 
-        if (pieceCoord.j + 1 < gBoard.length) {
-            if (pieceCoord.i - 2 >= 0) {
-                var currPos = { i: pieceCoord.i - 2, j: pieceCoord.j + 1 }
-                if (isEmptyCell(currPos)) res.push(currPos)
-            } if (pieceCoord.i + 2 < gBoard.length) {
-                currPos = { i: pieceCoord.i + 2, j: pieceCoord.j + 1 }
-                if (isEmptyCell(currPos)) res.push(currPos)
-            }
+    if (pieceCoord.j + 1 < gBoard.length) {
+        if (pieceCoord.i - 2 >= 0) {
+            var currPos = { i: pieceCoord.i - 2, j: pieceCoord.j + 1 }
+            if (isEmptyCell(currPos)) res.push(currPos)
+        } if (pieceCoord.i + 2 < gBoard.length) {
+            currPos = { i: pieceCoord.i + 2, j: pieceCoord.j + 1 }
+            if (isEmptyCell(currPos)) res.push(currPos)
         }
+    }
 
-        if (pieceCoord.i - 1 >= 0) {
-            if (pieceCoord.j - 2 >= 0) {
-                var currPos = { i: pieceCoord.i - 1, j: pieceCoord.j - 2 }
-                if (isEmptyCell(currPos)) res.push(currPos)
-            } if (pieceCoord.i + 2 < gBoard.length) {
-                currPos = { i: pieceCoord.i - 1, j: pieceCoord.j + 2 }
-                if (isEmptyCell(currPos)) res.push(currPos)
-            }
+    if (pieceCoord.i - 1 >= 0) {
+        if (pieceCoord.j - 2 >= 0) {
+            var currPos = { i: pieceCoord.i - 1, j: pieceCoord.j - 2 }
+            if (isEmptyCell(currPos)) res.push(currPos)
+        } if (pieceCoord.i + 2 < gBoard.length) {
+            currPos = { i: pieceCoord.i - 1, j: pieceCoord.j + 2 }
+            if (isEmptyCell(currPos)) res.push(currPos)
         }
+    }
 
-        if (pieceCoord.i + 1 < gBoard.length) {
-            if (pieceCoord.j - 2 >= 0) {
-                var currPos = { i: pieceCoord.i + 1, j: pieceCoord.j - 2 }
-                if (isEmptyCell(currPos)) res.push(currPos)
-            } if (pieceCoord.i + 2 < gBoard.length) {
-                currPos = { i: pieceCoord.i + 1, j: pieceCoord.j + 2 }
-                if (isEmptyCell(currPos)) res.push(currPos)
-            }
+    if (pieceCoord.i + 1 < gBoard.length) {
+        if (pieceCoord.j - 2 >= 0) {
+            var currPos = { i: pieceCoord.i + 1, j: pieceCoord.j - 2 }
+            if (isEmptyCell(currPos)) res.push(currPos)
+        } if (pieceCoord.i + 2 < gBoard.length) {
+            currPos = { i: pieceCoord.i + 1, j: pieceCoord.j + 2 }
+            if (isEmptyCell(currPos)) res.push(currPos)
         }
-
     }
 
     return res
+}
+
+
+function restartGame() {
+    initGame()
 }
